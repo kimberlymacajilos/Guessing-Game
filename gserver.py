@@ -44,9 +44,9 @@ while True:
             if addr[0] not in leaderboard:
                 leaderboard[addr[0]] = 1
             else:
-                leaderboard[addr[0]] = 1
+                leaderboard[addr[0]] += 1
 
-            score = (f"Correct Answer! Your score {leaderboard[addr[0]]}\n")   
+            score = f"Correct Answer! Your score {leaderboard[addr[0]]}\n"  
             conn.sendall(score.encode())
             conn.close()
             conn = None
