@@ -17,7 +17,7 @@ while True:
     s.sendall(difficulty.encode())
 
     data = s.recv(1024)
-    print(data.decode().strip)
+    print(data.decode().strip())
 
     while True:
         #let get our input from the user
