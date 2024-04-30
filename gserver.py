@@ -32,6 +32,8 @@ while True:
         print(f"new client: {addr[0]}")
         conn.sendall(b"Choose difficulty level: easy (1-50), medium (1-100), hard (1-500): ")
         difficulty = conn.recv(1024).decode().strip().lower()
+        conn.sendall(b"Enter your name: ")
+        name = conn.recv(1024).decode().strip()
         # cheat_str = f"==== number to guess is {guessme} \n" + banner 
         # conn.sendall(cheat_str.encode())
         guessme = generate_random_int(difficulty)
@@ -41,12 +43,12 @@ while True:
         guess = int(client_input.decode().strip())
         print(f"User guess attempt: {guess}")
         if guess == guessme:
-            if addr[0] not in leaderboard:
-                leaderboard[addr[0]] = 1
+            if name not in leaderboard:
+                leaderboard[name] = 1
             else:
-                leaderboard[addr[0]] += 1
+                leaderboard[name] += 1
 
-            score = f"Correct Answer! Your score {leaderboard[addr[0]]}\n"  
+            score = f"Correct Answer! {name} score: {leaderboard.get(name, 0)}\n"  
             conn.sendall(score.encode())
             conn.close()
             conn = None
