@@ -23,6 +23,8 @@ s.listen(5)
 print(f"server is listening in port {port}")
 guessme = 0
 conn = None
+
+leaderboard = {}
 while True:
     if conn is None:
         print("waiting for connection..")
@@ -39,7 +41,13 @@ while True:
         guess = int(client_input.decode().strip())
         print(f"User guess attempt: {guess}")
         if guess == guessme:
-            conn.sendall(b"Correct Answer!")
+            if addr[0] not in leaderboard:
+                leaderboard[addr[0]] = 1
+            else:
+                leaderboard[addr[0]] = 1
+
+            score = (f"Correct Answer! Your score {leaderboard[addr[0]]}\n")   
+            conn.sendall(score.encode())
             conn.close()
             conn = None
             continue
