@@ -13,6 +13,12 @@ while True:
     # print banner
     print(data.decode().strip())
 
+    difficulty = input("").strip().lower()
+    s.sendall(difficulty.encode())
+
+    data = s.recv(1024)
+    print(data.decode().strip)
+
     while True:
         #let get our input from the user
         user_input = input("").strip()
