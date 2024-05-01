@@ -14,6 +14,22 @@ def generate_random_int(difficulty):
         return random.randint(1, 100)
     elif difficulty == "hard":
         return random.randint(1, 500)
+    
+def leaderboard_file():
+    leaderboard = {}
+    try:
+        with open("leaderboard.txt", "r") as file:
+            for line in file:
+                name, score, difficulty = line.strip().split(',')
+                leaderboard[name] = {"score": int(score), "difficulty:": difficulty}
+    except FileNotFoundError:
+        pass
+    return leaderboard
+
+def savefile(leaderboard):
+    with open("leaderboard.txt", "w") as file:
+        for name, data in leaderboard.items():
+            file.write(f"{name}, {data['score']}, {data['difficulty']}\n")
 
 # initialize the socket object
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,7 +40,7 @@ print(f"server is listening in port {port}")
 guessme = 0
 conn = None
 
-leaderboard = {}
+leaderboard = leaderboard_file()
 while True:
     if conn is None:
         print("waiting for connection..")
@@ -34,6 +50,10 @@ while True:
         difficulty = conn.recv(1024).decode().strip().lower()
         conn.sendall(b"Enter your name: ")
         name = conn.recv(1024).decode().strip()
+
+        userdata = leaderboard.get(name, {"score": 0, "difficulty": "easy"})
+        score = userdata["score"]
+        difficulty = userdata["difficulty"]
         # cheat_str = f"==== number to guess is {guessme} \n" + banner 
         # conn.sendall(cheat_str.encode())
         guessme = generate_random_int(difficulty)
@@ -43,12 +63,9 @@ while True:
         guess = int(client_input.decode().strip())
         print(f"User guess attempt: {guess}")
         if guess == guessme:
-            if name not in leaderboard:
-                leaderboard[name] = 1
-            else:
-                leaderboard[name] += 1
-
-            score = f"Correct Answer! {name} score: {leaderboard.get(name, 0)}\n"  
+            leaderboard[name] = {"score": leaderboard.get(name, {"score": 0})["score"] + 1, "difficulty": difficulty}
+            savefile(leaderboard)
+            score = f"Correct Answer! {name} score: {leaderboard[name]['score']}\n"  
             conn.sendall(score.encode())
             conn.close()
             conn = None
