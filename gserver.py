@@ -51,9 +51,9 @@ while True:
         conn.sendall(b"Enter your name: ")
         name = conn.recv(1024).decode().strip()
 
-        userdata = leaderboard.get(name, {"score": 0, "difficulty": "easy"})
+        userdata = leaderboard.get(name, {"score": 0, "difficulty": difficulty})
         score = userdata["score"]
-        difficulty = userdata["difficulty"]
+        difficulty = userdata[difficulty]
         # cheat_str = f"==== number to guess is {guessme} \n" + banner 
         # conn.sendall(cheat_str.encode())
         guessme = generate_random_int(difficulty)
